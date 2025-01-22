@@ -20,23 +20,14 @@ export function StickyComponent({ children, topOffset = 0 }: StickyComponentProp
 
   return (
     <>
-      {/* Sentinel */}
       <div ref={ref} className="h-[1px] w-full" />
 
-      {/* Sticky content */}
       <div
         className={cn(
-          'w-full',
-          'bg-white/90 backdrop-blur-xl',
-          'transition-all duration-300 ease-in-out',
-          isStuck
-            ? 'fixed top-0 shadow-sm' // Sticky state
-            : 'relative' // Default state
+          'w-full bg-[#eaecf0] backdrop-blur-xl transition-all duration-300 ease-in-out',
+          isStuck ? 'fixed top-0 shadow-sm' : 'relative'
         )}
-        style={{
-          zIndex: 50,
-          top: isStuck ? `${topOffset}px` : 'auto' // Apply top offset when sticky
-        }}
+        style={{ zIndex: 50, top: isStuck ? `${topOffset}px` : 'auto' }}
       >
         {children}
       </div>

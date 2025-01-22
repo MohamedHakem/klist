@@ -1,103 +1,94 @@
 // hooks/useProblemFilters.ts
-import { useMemo } from 'react';
-import { useQueryState } from 'nuqs';
+import { useMemo, useState } from 'react';
+import { useQueryStates, parseAsArrayOf, parseAsString } from 'nuqs';
 import { getProblems } from '@/lib/get-problems';
-import { createArrayQueryState } from '@/lib/create-array-query-state-nuqs';
+import { useIsMobile } from './use-mobile';
 
-export function useProblemFilters() {
-  // Get static problems data
+type ProblemFiltersReturn = {
+  allTopics: string[];
+  selectedTopics: string[];
+  availableTopics: string[];
+  topicCounts: Record<string, number>;
+  isAllSelected: boolean;
+  handleTopicToggle: (topic: string) => void;
+  handleSelectAll: () => void;
+  handleDeselectAll: () => void;
+  isMobile: boolean;
+  open: boolean;
+  setOpen: (value: boolean) => void;
+};
+
+export function useProblemFilters(): ProblemFiltersReturn {
+  const [open, setOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  // Get problems data (static for now)
   const problems = getProblems();
 
-  // Get all unique topics, patterns, and companies
-  const allTopics = Array.from(new Set(problems.flatMap((p) => p.topics)));
-  const allPatterns = Array.from(new Set(problems.flatMap((p) => p.patterns)));
-  const allCompanies = Array.from(new Set(problems.flatMap((p) => p.companies)));
-
-  // Create query state parsers and serializers
-  const patternsQueryState = createArrayQueryState(allPatterns);
-  const companiesQueryState = createArrayQueryState(allCompanies);
-  const topicsQueryState = createArrayQueryState(allTopics);
-
-  // Use useQueryState for patterns, companies, and topics
-  const [selectedPatterns] = useQueryState('patterns', {
-    ...patternsQueryState,
-    defaultValue: []
-  });
-  const [selectedCompanies] = useQueryState('companies', {
-    ...companiesQueryState,
-    defaultValue: []
-  });
-  const [selectedTopics, setSelectedTopics] = useQueryState('topics', {
-    ...topicsQueryState,
-    defaultValue: allTopics // Default to all topics selected
+  // Read/initialize query states for companies, patterns, levels, and topics
+  const [{ companies, patterns, levels, topics }, setQuery] = useQueryStates({
+    companies: parseAsArrayOf(parseAsString).withDefault([]),
+    patterns: parseAsArrayOf(parseAsString).withDefault([]),
+    levels: parseAsArrayOf(parseAsString).withDefault([]),
+    topics: parseAsArrayOf(parseAsString).withDefault([])
   });
 
-  // Compute available topics and their counts based on selected patterns and companies
-  const { availableTopics, topicCounts } = useMemo(() => {
-    const availableTopics = new Set<string>();
-    const topicCounts: Record<string, number> = {};
+  // Filter problems based on selected companies, patterns, and levels
+  const filteredProblems = useMemo(() => {
+    return problems.filter((problem) => {
+      const matchesCompany = !companies || companies.length === 0 || companies.some((c) => problem.companies.includes(c));
+      const matchesPattern = !patterns || patterns.length === 0 || patterns.some((pattern) => problem.patterns.includes(pattern));
+      const matchesLevel = !levels || levels.length === 0 || levels.some((level) => level === problem.difficulty);
 
-    // If no patterns or companies are selected, all topics are available
-    const noFiltersSelected = selectedPatterns.length === 0 && selectedCompanies.length === 0;
-
-    allTopics.forEach((topic) => {
-      // Filter problems that match the selected patterns and companies
-      const matchingProblems = problems.filter((problem) => {
-        const matchesPattern =
-          selectedPatterns.length === 0 || selectedPatterns.every((pattern) => problem.patterns.includes(pattern));
-        const matchesCompany =
-          selectedCompanies.length === 0 || selectedCompanies.every((company) => problem.companies.includes(company));
-        return matchesPattern && matchesCompany && problem.topics.includes(topic);
-      });
-
-      // If no filters are selected, all topics are available
-      if (noFiltersSelected) {
-        availableTopics.add(topic);
-        topicCounts[topic] = problems.filter((problem) => problem.topics.includes(topic)).length;
-      } else if (matchingProblems.length > 0) {
-        // Otherwise, only include topics with matching problems
-        availableTopics.add(topic);
-        topicCounts[topic] = matchingProblems.length;
-      }
+      return matchesCompany && matchesPattern && matchesLevel;
     });
+  }, [problems, companies, patterns, levels]);
 
-    return { availableTopics: Array.from(availableTopics), topicCounts };
-  }, [selectedPatterns, selectedCompanies, allTopics, problems]);
+  // Extract available topics from filtered problems
+  const availableTopics = useMemo(() => {
+    // combine all topics, flat them into an arr, throw them in a set to remove duplicates, turn into an arr
+    return Array.from(new Set(filteredProblems.flatMap((problem) => problem.topics)));
+  }, [filteredProblems]);
+
+  // Determine selected topics
+  const selectedTopics = useMemo(() => {
+    if (!topics || topics.length === 0) return availableTopics;
+    else return availableTopics.filter((topic) => topics.includes(topic));
+  }, [topics, availableTopics]);
+
+  // Compute topic counts
+  const topicCounts = useMemo(() => {
+    return availableTopics.reduce((accumulator, topic) => {
+      accumulator[topic] = filteredProblems.filter((problem) => problem.topics.includes(topic)).length;
+      return accumulator;
+    }, {} as Record<string, number>);
+  }, [availableTopics, filteredProblems]);
 
   // Determine if all available topics are selected
-  const isAllSelected = availableTopics.every((topic) => selectedTopics.includes(topic));
+  const isAllSelected = availableTopics.length === selectedTopics.length;
 
+  // Handle selecting/deselecting topics
   const handleTopicToggle = (topic: string) => {
-    const newTopics = selectedTopics.includes(topic)
+    const newSelectedTopics = selectedTopics.includes(topic)
       ? selectedTopics.filter((t) => t !== topic)
       : [...selectedTopics, topic];
-
-    // If all topics are selected, remove the `topics` parameter (default state)
-    if (newTopics.length === allTopics.length) {
-      setSelectedTopics(null); // Remove the `topics` parameter
-    } else {
-      setSelectedTopics(newTopics);
-    }
+    setQuery({ topics: newSelectedTopics });
   };
 
-  const handleSelectAll = () => {
-    // Select all available topics and remove the `topics` parameter (default state)
-    setSelectedTopics(null); // Remove the `topics` parameter
-  };
-
-  const handleDeselectAll = () => {
-    // Deselect all topics
-    setSelectedTopics([]);
-  };
+  const handleSelectAll = () => setQuery({ topics: availableTopics });
+  const handleDeselectAll = () => setQuery({ topics: [] });
 
   return {
-    allTopics,
+    allTopics: Array.from(new Set(problems.flatMap((p) => p.topics))),
     selectedTopics,
     availableTopics,
     topicCounts,
     isAllSelected,
     handleTopicToggle,
     handleSelectAll,
-    handleDeselectAll
+    handleDeselectAll,
+    isMobile,
+    open,
+    setOpen
   };
 }

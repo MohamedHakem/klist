@@ -32,7 +32,7 @@ export default function Home() {
       </StickyComponent>
 
       <Suspense fallback={<div>Loading...</div>}>
-        <ProblemList />
+        {/* <ProblemList /> */}
       </Suspense>
     </div>
   );

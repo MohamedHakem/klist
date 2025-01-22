@@ -2,30 +2,32 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
-interface TopicsCommandContentProps {
-  selectedTopics: string[];
+interface ItemsCommandContentProps {
+  type: string;
+  selectedItems: string[];
   isAllSelected: boolean;
   handleSelectAll: () => void;
   handleDeselectAll: () => void;
-  handleTopicToggle: (topic: string) => void;
-  topics: string[];
-  availableTopics: string[];
-  topicCounts: Record<string, number>;
+  handleItemToggle: (item: string) => void;
+  items: string[];
+  availableItems: string[];
+  itemCounts: Record<string, number>;
 }
 
-export function TopicsCommandContent({
-  selectedTopics,
+export function ItemsCommandContent({
+  type,
+  items,
+  availableItems,
+  selectedItems,
   isAllSelected,
+  itemCounts,
   handleSelectAll,
   handleDeselectAll,
-  handleTopicToggle,
-  topics,
-  availableTopics,
-  topicCounts
-}: TopicsCommandContentProps) {
+  handleItemToggle
+}: ItemsCommandContentProps) {
   return (
     <Command>
-      <CommandInput placeholder="Search topics..." />
+      <CommandInput placeholder={`Search ${type}...`} />
       <div className="border-b p-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center cursor-pointer select-none">
@@ -38,32 +40,29 @@ export function TopicsCommandContent({
               }}
             />
             <Label htmlFor="select-all" className="cursor-pointer pl-2">
-              Select All
+              {isAllSelected ? 'Deselect all' : 'Select all'}
             </Label>
           </div>
           <span className="text-xs text-muted-foreground">
-            {selectedTopics.length}/{topics.length}
+            {selectedItems.length}/{items.length}
           </span>
         </div>
       </div>
       <CommandList>
-        <CommandEmpty>No topic found.</CommandEmpty>
+        <CommandEmpty>No {type} found.</CommandEmpty>
         <CommandGroup>
-          {topics.map((topic, index) => (
+          {items.map((item, index) => (
             <CommandItem
               key={index}
-              onSelect={() => availableTopics.includes(topic) && handleTopicToggle(topic)}
-              className={`cursor-pointer py-2 border-b ${
-                !availableTopics.includes(topic) ? 'opacity-50 pointer-events-none' : ''
-              }`}
+              onSelect={() => availableItems.includes(item) && handleItemToggle(item)}
+              className={`cursor-pointer py-2 border-b ${!availableItems.includes(item) ? 'opacity-50 pointer-events-none' : ''}`}
             >
-              <Checkbox checked={selectedTopics.includes(topic)} className="mr-2" />
-              {topic}
-              {availableTopics.includes(topic) && (
-                <span className="ml-1 text-xs text-muted-foreground">
-                  ({topicCounts[topic]}{topic.length < 14 ? (topicCounts[topic] > 1 ? ' problems' : ' problem') : ''})
-                </span>
-              )}
+              <Checkbox checked={selectedItems.includes(item)} className={!availableItems.includes(item) ? 'opacity-30' : ''} />
+              {item}
+              <span className="text-xs text-muted-foreground/70">
+                ({itemCounts[item]}
+                {item.length < 20 ? (!itemCounts[item] ? '0' : itemCounts[item] > 1 ? ' problems' : ' problem') : ''})
+              </span>
             </CommandItem>
           ))}
         </CommandGroup>

@@ -1,11 +1,11 @@
 import { JSX } from 'react';
 
-type Difficulty = 'Easy' | 'Medium' | 'Hard';
+// type Difficulty = 'Easy' | 'Medium' | 'Hard';
 
 export type ProblemItemProps = {
   id: number;
   title: string;
-  difficulty: Difficulty;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
   timeEstimate: number;
   topics: string[];
   patterns: string[];

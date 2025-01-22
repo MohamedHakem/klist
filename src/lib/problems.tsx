@@ -1231,7 +1231,7 @@ const Problems: ProblemItemProps[] = [
     difficulty: 'Medium',
     timeEstimate: 25,
     topics: ['Array'],
-    patterns: ['Two Pointers', 'Extra Space (Optional)'], // Can be solved with Two Pointers or using extra space for a more readable solution
+    patterns: ['Two Pointers', 'Extra Space'], // Can be solved with Two Pointers or using extra space for a more readable solution
     companies: ['Microsoft', 'Amazon', 'Netflix'], // Commonly asked by these companies (no specific order)
     leetCodeUrl: 'https://leetcode.com/problems/rotate-array',
     videoUrl: 'https://youtube.com/watch?v=something',
@@ -1374,7 +1374,7 @@ const Problems: ProblemItemProps[] = [
     difficulty: 'Medium',
     timeEstimate: 30,
     topics: ['Graph'],
-    patterns: ['Depth-First Search (DFS)', 'Union Find (Optional)'], // Can be solved with DFS or Union Find for connected components
+    patterns: ['Depth-First Search (DFS)', 'Union Find'], // Can be solved with DFS or Union Find for connected components
     companies: ['Amazon', 'Microsoft', 'Facebook'], // Commonly asked by these companies (no specific order)
     leetCodeUrl: 'https://leetcode.com/problems/number-of-connected-components-in-an-undirected-graph',
     videoUrl: 'https://youtube.com/watch?v=something',
@@ -1782,7 +1782,7 @@ const Problems: ProblemItemProps[] = [
     difficulty: 'Hard',
     timeEstimate: 40,
     topics: ['Stack'],
-    patterns: ['Shunting Yard Algorithm (Optional)'], // May use Shunting Yard Algorithm for complex expressions, similar to Basic Calculator II
+    patterns: ['Shunting Yard Algorithm'], // May use Shunting Yard Algorithm for complex expressions, similar to Basic Calculator II
     companies: ['Microsoft', 'Apple', 'Netflix'], // Commonly asked by these companies (no specific order)
     leetCodeUrl: 'https://leetcode.com/problems/basic-calculator',
     videoUrl: 'https://youtube.com/watch?v=something',
@@ -1793,8 +1793,8 @@ const Problems: ProblemItemProps[] = [
     title: 'Maximum Profit in Job Scheduling',
     difficulty: 'Hard',
     timeEstimate: 45,
-    topics: ['Binary Search', 'Dynamic Programming (Optional)'], // May use Binary Search for optimization and Dynamic Programming for efficient solution
-    patterns: ['Binary Search (Optional)'], // Binary Search is a potential approach for optimization
+    topics: ['Binary Search', 'Dynamic Programming'], // May use Binary Search for optimization and Dynamic Programming for efficient solution
+    patterns: ['Binary Search'], // Binary Search is a potential approach for optimization
     companies: ['Amazon', 'Facebook', 'Google'], // Commonly asked by these companies (no specific order)
     leetCodeUrl: 'https://leetcode.com/problems/maximum-profit-in-job-scheduling',
     videoUrl: 'https://youtube.com/watch?v=something',
@@ -1865,7 +1865,7 @@ const Problems: ProblemItemProps[] = [
     title: 'Longest Increasing Path in a Matrix',
     difficulty: 'Hard',
     timeEstimate: 40,
-    topics: ['Graph', 'Dynamic Programming (Optional)'], // Uses Dynamic Programming for optimization (optional)
+    topics: ['Graph', 'Dynamic Programming'], // Uses Dynamic Programming for optimization
     patterns: ['Depth-First Search (DFS)'], // DFS is a common approach to traverse the matrix and find the longest increasing path
     companies: ['Google', 'Netflix', 'Apple'], // Commonly asked by these companies (no specific order)
     leetCodeUrl: 'https://leetcode.com/problems/longest-increasing-path-in-a-matrix',
@@ -1913,7 +1913,7 @@ const Problems: ProblemItemProps[] = [
     title: 'Word Search II',
     difficulty: 'Hard',
     timeEstimate: 40,
-    topics: ['Graph', 'Backtracking (Optional)'], // Uses Graph Traversal (DFS) and Backtracking (optional) for efficient exploration
+    topics: ['Graph', 'Backtracking'], // Uses Graph Traversal (DFS) and Backtracking for efficient exploration
     patterns: ['Depth-First Search (DFS)'], // DFS is the primary approach for exploring the board and finding words
     companies: ['Facebook', 'Amazon', 'Google'], // Commonly asked by these companies (no specific order)
     leetCodeUrl: 'https://leetcode.com/problems/word-search-ii',
@@ -2069,18 +2069,7 @@ const problemsTopics = [
   'Priority Queue'
 ];
 
-const problemsCompanies = [
-  'Facebook',
-  'Amazon',
-  'Microsoft',
-  'Google',
-  'Apple',
-  'Uber',
-  'Airbnb',
-  'Lyft',
-  'Netflix',
-  'Twitter'
-];
+const problemsCompanies = ['Facebook', 'Amazon', 'Microsoft', 'Google', 'Apple', 'Uber', 'Airbnb', 'Lyft', 'Netflix', 'Twitter'];
 
 const problemsPatterns = [
   'HashMap',
@@ -2151,9 +2140,9 @@ const problemsPatterns = [
   'Monotonic Stack',
   'Bottom-up DP',
   "Floyd's Cycle Finding Algorithm",
-  'Extra Space (Optional)',
+  'Extra Space',
   'Merge Sort',
-  'Union Find (Optional)',
+  'Union Find',
   'Prefix Sum',
   'Heap (Min Heap)',
   'Quick Select',
@@ -2168,8 +2157,8 @@ const problemsPatterns = [
   'Hash Table with Additional Data Structure',
   'Pre-order Traversal (DFS)',
   'Heaps (Min-Heap and Max-Heap)',
-  'Shunting Yard Algorithm (Optional)',
-  'Binary Search (Optional)',
+  'Shunting Yard Algorithm',
+  'Binary Search',
   'Stack with Additional Data Structure (Hash Table)',
   'Binary Search (Modified)',
   'Merging Intervals',

@@ -16,11 +16,17 @@ export const useProblemData = () => {
   const [completedProblems] = useLocalStorage<number[]>('completedProblems', []);
 
   const filteredProblems = useMemo(() => {
+    // const parseFilterValues = (value: string | null): string[] => {
+    //   const stringValue = String(value).trim();
+    //   if (stringValue === null || stringValue === 'none') return [];
+    //   console.log('🚀 ~ filteredProblems ~ stringValue:', stringValue);
+    //   return stringValue.split(','); // Split comma-separated strings into arrays
+    // };
+
     const parseFilterValues = (value: string | null): string[] => {
-      const stringValue = String(value).trim();
-      if (stringValue === null || stringValue === 'none') return [];
-      console.log('🚀 ~ filteredProblems ~ stringValue:', stringValue);
-      return stringValue.split(','); // Split comma-separated strings into arrays
+      console.log("🚀 ~ filteredProblems ~ value:", value)
+      if (!value || value === 'null' || value === 'none') return [];
+      return value?.trim().split(',');
     };
 
     // Parse URL values into arrays
@@ -29,16 +35,10 @@ export const useProblemData = () => {
     const selectedCompanies = parseFilterValues(companies);
 
     return problems.filter((p: ProblemItemProps) => {
-      const matchesLevel = level === 'all' || p.difficulty.toLowerCase() === level.toLowerCase();
-
-      // If topics is empty, include all topics; otherwise, check if the problem matches any selected topic
+      const matchesLevel = !level || level === 'all' || p.difficulty.toLowerCase() === level.toLowerCase();
       const matchesTopics = selectedTopics.length === 0 || p.topics.some((topic) => selectedTopics.includes(topic));
-
-      // If patterns is empty, include all patterns; otherwise, check if the problem matches any selected pattern
       const matchesPatterns =
         selectedPatterns.length === 0 || p.patterns.some((pattern) => selectedPatterns.includes(pattern));
-
-      // If companies is empty, include all companies; otherwise, check if the problem matches any selected company
       const matchesCompanies =
         selectedCompanies.length === 0 || p.companies.some((company) => selectedCompanies.includes(company));
 
